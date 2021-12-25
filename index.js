@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require('path');
 const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -17,6 +18,7 @@ mongoose.connect(
 );
 
 //middleware
+app.use(express.static(path.resolve(__dirname, './client/build')));
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
