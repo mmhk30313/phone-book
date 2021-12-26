@@ -4,7 +4,7 @@ const regex = /^(((\+8801|8801|01|008801))[1|3-9]{1}(\d){8})$/;
 
 const findContact = async(query = {}) => {
     // console.log({query});
-    const contact = query?.id ? await contacts.findById(query?.id, ['id', 'name', 'mobile_number']) : await contacts.find(query, ['id', 'name', 'mobile_number']);
+    const contact = query?.id ? await contacts.findById(query?.id, ['id', 'name', 'mobile_number']) : await contacts.find(query);
     return contact;
 }
 
@@ -94,7 +94,8 @@ router.get('/find-one', async(req, res) => {
 router.get("/find-all", async (_, res) => {
     try {
       const myContacts = await findContact();
-      res.status(200).json({success: true, data: myContacts});
+      const allContacts = myContacts.sort((a,b) =>  new Date(a.createdAt) - new Date(b.createdAt));
+      res.status(200).json({success: true, data: allContacts});
 
     } catch (err) {
       res.status(500).json({success: false, err});
