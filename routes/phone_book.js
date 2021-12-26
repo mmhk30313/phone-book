@@ -11,6 +11,7 @@ const findContact = async(query = {}) => {
 // register a contact
 router.post('/register', async (req, res) => {
     const {name, mobile_number: mobile} = req?.body;
+    console.log({mobile});
     try {
         //create a new contact
         if(name && mobile){
@@ -55,12 +56,49 @@ router.post('/get-one', async(req, res) => {
     const query = {};
     id && (query.id = id);
     mobile_number && (query.mobile_number = mobile_number);
+    console.log({mobile_number});
     try {
         // const contact = await contacts.find(query);
-        const contact = await contacts.findOne(query);
-        console.log({contact});
-        if(contact?.id){
-            res.status(200).json({success: true, data: contact});
+        // const contact = await contacts.findOne(query);
+        const contact = await contacts.aggregate([
+            { $match: { mobile_number } },
+            {
+                $addFields: { 
+                    date: {
+                        $dateToString:
+                        {
+                            format: "%d-%m-%Y",
+                            date: "$createdAt"
+                        }
+                    },
+                    hour: {
+                        $hour: {
+                            date: "$createdAt" 
+                        },
+                    },
+                    min: {
+                        $minute: {
+                            date: "$createdAt" 
+                        },
+                    },
+                    sec: {
+                        $second: {
+                            date: "$createdAt" 
+                        },
+                    },
+                    time: {
+                        $dateToString:{
+                            format:"%H:%M:%S",
+                            date: "$createdAt"
+                        }
+                    }
+                }
+            },
+            { $limit: 1 }
+        ]);
+        // console.log({contact});
+        if(contact[0]?._id){
+            res.status(200).json({success: true, data: contact[0]});
         }else{
             res.status(404).json({success: false, message: "The contact isn't found"});
         }
@@ -94,7 +132,7 @@ router.get('/find-one', async(req, res) => {
 router.get("/find-all", async (_, res) => {
     try {
       const myContacts = await findContact();
-      const allContacts = myContacts.sort((a,b) =>  new Date(a.createdAt) - new Date(b.createdAt));
+      const allContacts = myContacts.sort((a,b) =>  new Date(b.createdAt) - new Date(a.createdAt));
       res.status(200).json({success: true, data: allContacts});
 
     } catch (err) {
