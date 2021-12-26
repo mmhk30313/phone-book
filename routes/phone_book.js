@@ -56,7 +56,7 @@ router.post('/get-one', async(req, res) => {
     const query = {};
     id && (query.id = id);
     mobile_number && (query.mobile_number = mobile_number);
-    console.log({mobile_number});
+    // console.log({mobile_number});
     try {
         // const contact = await contacts.find(query);
         // const contact = await contacts.findOne(query);
