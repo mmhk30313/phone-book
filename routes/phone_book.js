@@ -71,17 +71,29 @@ router.post('/get-one', async(req, res) => {
                             date: "$createdAt"
                         }
                     },
-                    hour: {
-                        $hour: {
-                            date: "$createdAt" 
+                    hr_mm_ss_yy_dd_mm: {
+                        $dateToParts: {
+                            date: "$createdAt",
+                            timezone: "Asia/Calcutta"
                         },
                     },
-                    min: {
+                    // hour: {
+                    //     $hour: {
+                    //         date: "$createdAt" 
+                    //     },
+                    // },
+                    hh: {
+                        $hour: {
+                            date: "$createdAt",
+                            timezone: "Asia/Calcutta" 
+                        },
+                    },
+                    mm: {
                         $minute: {
                             date: "$createdAt" 
                         },
                     },
-                    sec: {
+                    ss: {
                         $second: {
                             date: "$createdAt" 
                         },
