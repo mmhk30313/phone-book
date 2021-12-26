@@ -4,14 +4,14 @@ const regex = /^(((\+8801|8801|01|008801))[1|3-9]{1}(\d){8})$/;
 
 const findContact = async(query = {}) => {
     // console.log({query});
-    const contact = query?.id ? await contacts.findById(query?.id, ['id', 'name', 'mobile_number']) : await contacts.find(query, ['id', 'name', 'mobile_number']);
+    const contact = query?.id ? await contacts.findById(query?.id, ['id', 'name', 'mobile_number']) : await contacts.find(query);
     return contact;
 }
 
 // register a contact
 router.post('/register', async (req, res) => {
     const {name, mobile_number: mobile} = req?.body;
-    console.log({name});
+    console.log({mobile});
     try {
         //create a new contact
         if(name && mobile){
@@ -49,6 +49,76 @@ router.post('/register', async (req, res) => {
     }
 });
 
+// get a contact by mobile
+router.post('/get-one', async(req, res) => {
+    const params = req?.body;
+    const {id, mobile_number} = params;
+    const query = {};
+    id && (query.id = id);
+    mobile_number && (query.mobile_number = mobile_number);
+    // console.log({mobile_number});
+    try {
+        // const contact = await contacts.find(query);
+        // const contact = await contacts.findOne(query);
+        const contact = await contacts.aggregate([
+            { $match: { mobile_number } },
+            {
+                $addFields: { 
+                    date: {
+                        $dateToString:
+                        {
+                            format: "%d-%m-%Y",
+                            date: "$createdAt"
+                        }
+                    },
+                    hr_mm_ss_yy_dd_mm: {
+                        $dateToParts: {
+                            date: "$createdAt",
+                            timezone: "Asia/Calcutta"
+                        },
+                    },
+                    // hour: {
+                    //     $hour: {
+                    //         date: "$createdAt" 
+                    //     },
+                    // },
+                    hh: {
+                        $hour: {
+                            date: "$createdAt",
+                            timezone: "Asia/Calcutta" 
+                        },
+                    },
+                    mm: {
+                        $minute: {
+                            date: "$createdAt" 
+                        },
+                    },
+                    ss: {
+                        $second: {
+                            date: "$createdAt" 
+                        },
+                    },
+                    time: {
+                        $dateToString:{
+                            format:"%H:%M:%S",
+                            date: "$createdAt"
+                        }
+                    }
+                }
+            },
+            { $limit: 1 }
+        ]);
+        // console.log({contact});
+        if(contact[0]?._id){
+            res.status(200).json({success: true, data: contact[0]});
+        }else{
+            res.status(404).json({success: false, message: "The contact isn't found"});
+        }
+    } catch (err) {
+        return res.status(500).json({success: false, err});
+    }
+});
+
 // get a contact
 router.get('/find-one', async(req, res) => {
     const queryString = req.query;
@@ -74,7 +144,8 @@ router.get('/find-one', async(req, res) => {
 router.get("/find-all", async (_, res) => {
     try {
       const myContacts = await findContact();
-      res.status(200).json({success: true, data: myContacts});
+      const allContacts = myContacts.sort((a,b) =>  new Date(b.createdAt) - new Date(a.createdAt));
+      res.status(200).json({success: true, data: allContacts});
 
     } catch (err) {
       res.status(500).json({success: false, err});

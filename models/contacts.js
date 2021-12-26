@@ -15,9 +15,10 @@ const ContactSchema = new mongoose.Schema(
       max: 14,
       length: 14,
       unique: true,
-    }
+    },
   },
   { timestamps: true }
+  
 );
 
 module.exports = mongoose.model("Contacts", ContactSchema);
