@@ -48,6 +48,27 @@ router.post('/register', async (req, res) => {
     }
 });
 
+// get a contact by mobile
+router.post('/get-one', async(req, res) => {
+    const params = req?.body;
+    const {id, mobile_number} = params;
+    const query = {};
+    id && (query.id = id);
+    mobile_number && (query.mobile_number = mobile_number);
+    try {
+        // const contact = await contacts.find(query);
+        const contact = await contacts.findOne(query);
+        console.log({contact});
+        if(contact?.id){
+            res.status(200).json({success: true, data: contact});
+        }else{
+            res.status(404).json({success: false, message: "The contact isn't found"});
+        }
+    } catch (err) {
+        return res.status(500).json({success: false, err});
+    }
+});
+
 // get a contact
 router.get('/find-one', async(req, res) => {
     const queryString = req.query;
