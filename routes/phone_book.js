@@ -11,6 +11,7 @@ const findContact = async(query = {}) => {
 // register a contact
 router.post('/register', async (req, res) => {
     const {name, mobile_number: mobile} = req?.body;
+    console.log({name});
     try {
         //create a new contact
         if(name && mobile){
@@ -22,7 +23,7 @@ router.post('/register', async (req, res) => {
             
                 //save contact and respond
                 const contact = await newContact.save();
-                res.status(200).json({...contact?._doc, contactId: contact?._id});
+                res.status(200).json({success: true, ...contact?._doc, contactId: contact?._id});
                 return;
             }
             res.status(500).json({

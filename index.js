@@ -18,12 +18,12 @@ mongoose.connect(
 );
 
 //middleware
-app.use(express.static(path.resolve(__dirname, './client/build')));
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(cors({origin: true}));
 app.use(rootPath);
 app.use("/api/contact", contactRoute);
+app.use(express.static(path.resolve(__dirname, './client/build')));
 
 app.listen(process.env.PORT || port);
