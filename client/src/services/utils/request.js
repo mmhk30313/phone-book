@@ -32,15 +32,15 @@ export const request = (link, params) => {
         ...fetchConfig,
         body: JSON.stringify(params?.body),
     })
-    console.log({fetchConfig});
+    // console.log({fetchConfig});
     
     const url = (liveUrl || baseUrl) + link;
-    console.log({url});
+    // console.log({url});
     
     return fetch(url, fetchConfig)
     .then(res => res.json())
     .then(data => {
-        console.log({data});
+        // console.log({data});
         return data;
     })
     .catch((err)=> {

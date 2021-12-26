@@ -15,7 +15,7 @@ export const getContacts = async() => {
 
 // add a contact
 export const addContact = async(params) => {
-    console.log({params});
+    // console.log({params});
 	const reqUrl = "/api/contact/register";
 	try {
 		const data = await request(reqUrl, {
@@ -44,7 +44,7 @@ export const editContact = async(id, params) => {
 
 // delete a contact
 export const deleteContact = async(id, params) => {
-	const reqUrl = "/api/contact/delete?id="+id;
+	const reqUrl = `/api/contact/delete/${id}`;
 	try {
 		const data = await request(reqUrl, {
             method: "DELETE",
@@ -57,10 +57,11 @@ export const deleteContact = async(id, params) => {
 
 // find a contact
 export const find_A_Contact = async(params) => {
-	const reqUrl = "/api/contact/find-one?mobile="+params?.mobile_number;
+	const reqUrl = "/api/contact/get-one";
 	try {
 		const data = await request(reqUrl, {
-            method: "GET",
+            method: "POST",
+			body: params
         });	
 		return data;
 	} catch (error) {

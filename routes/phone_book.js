@@ -11,7 +11,7 @@ const findContact = async(query = {}) => {
 // register a contact
 router.post('/register', async (req, res) => {
     const {name, mobile_number: mobile} = req?.body;
-    console.log({mobile});
+    // console.log({mobile});
     try {
         //create a new contact
         if(name && mobile){
@@ -155,8 +155,8 @@ router.get("/find-all", async (_, res) => {
 // update a contact
 router.put("/update", async (req, res) => {
     const queryString = req.query;
-    const {id, mobile: mobile_number} = queryString;
-    const query = id && {id} || mobile_number && {mobile_number} || null;
+    const {id: _id, mobile: mobile_number} = queryString;
+    const query = _id && {_id} || mobile_number && {mobile_number} || null;
     // console.log({flag: regex.test(req.body.mobile_number)});
     try {
         if(req?.body?.mobile_number && 
@@ -166,16 +166,21 @@ router.put("/update", async (req, res) => {
         ){
             return res.status(500).json({success: false, message: "Contact number is invalid"});
         }else{
-            const contact = await findContact(query);
-            if(req?.body?.mobile_number == contact?.mobile_number){
-                res.status(200).json({success: false, message: "Your contact number is already exits"});
-            }
-            else{
-                const myContact = await contacts.findOneAndUpdate(query, {
+            // const contact = await findContact(query);
+            // if(req?.body?.mobile_number == contact?.mobile_number){
+                //     res.status(200).json({success: false, message: "Your contact number is already exits"});
+                // }
+                // else{
+                const myContact = await contacts.updateOne(query, {
                     $set: req.body,
                 });
-                res.status(200).json({success: true, message: "Your contact has been updated"});
-            }
+                // console.log({myContact})
+                if(myContact?.modifiedCount){
+                    res.status(200).json({success: true, message: "Your contact has been updated"});
+                    return;
+                }
+                res.status(500).json({success: false, message: "Your contact isn't updated"});
+            // }
         }
     } catch (err) {
         return res.status(500).json({success: false, message: "Your contact number is already owned by other user"});
@@ -184,14 +189,15 @@ router.put("/update", async (req, res) => {
 
 // delete a contact
 router.delete('/delete/:id', async(req, res) => {
+    // console.log({id: req?.params?.id});
     try {
-        const result = await contacts.findByIdAndDelete(req.params.id);
+        const result = await contacts.findByIdAndRemove(req.params.id);
         // console.log({result});
         if(!result){
             res.status(200).json({success: false,message: "This contact is not exits"});
             return;
         }
-        res.status(200).json({success: true,message: "The contact has been deleted"});
+        res.status(200).json({success: true, message: "The contact has been deleted"});
     } catch (err) {
         return res.status(500).json({success: false, err});
     }
