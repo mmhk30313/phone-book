@@ -52,23 +52,27 @@ const Home = () => {
     return (
         <div className='container'>
             <h1 className='header'>Create a contact</h1>
-            <form className='card form p-5 w-75 mx-auto' onSubmit={handleSubmit}>
-                <div className='form-group'>
-                    <input className='form-control' type="text" placeholder="Name" name="name" required/>
-                </div><br/>
-                <div className='form-group'>
-                    <input 
-                        maxLength={14} 
-                        // onFocus={()=> setNotification("")}
-                        className='form-control' 
-                        type="text" 
-                        placeholder="Mobile Number" 
-                        name="mobile_number" required/>
-                </div><br/>
-                <div className='form-group'>
-                    <input className='btn btn-primary text-light btn-outline-success' type="submit" value="ADD" />
+            <div className="row justify-content-center">
+                <div className="col-xs-8 col-md-10 col-sm-12">
+                    <form className='card form p-3 mx-auto' onSubmit={handleSubmit}>
+                        <div className='form-group'>
+                            <input className='form-control' type="text" placeholder="Name" name="name" required/>
+                        </div><br/>
+                        <div className='form-group'>
+                            <input 
+                                maxLength={14} 
+                                // onFocus={()=> setNotification("")}
+                                className='form-control' 
+                                type="text" 
+                                placeholder="Mobile Number" 
+                                name="mobile_number" required/>
+                        </div><br/>
+                        <div className='form-group'>
+                            <input className='btn btn-primary text-light btn-outline-success' type="submit" value="ADD" />
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
             {
                 contacts?.length
                 ? <Main contacts={contacts} reRender={getAllContacts} />
