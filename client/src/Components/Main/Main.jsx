@@ -104,7 +104,7 @@ const Main = ({contacts, reRender}) => {
                                                                 />
                                                             </div><br/>
                                                             <div className='form-group'>
-                                                                <button onClick={() => setCurContactId(null)} className='btn btn-warning'>No</button>
+                                                                <p onClick={() => setCurContactId(null)} className='btn btn-warning'>No</p>
                                                                 <button type='Submit' onClick={() => handleEdit(contact?._id)} className='mx-3 btn btn-danger'>Yes</button>
                                                             </div>
                                                         </form>
